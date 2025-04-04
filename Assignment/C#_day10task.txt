@@ -1,0 +1,190 @@
+using System;
+using System.Collections.Generic;
+
+class Student
+{
+    public int StudentID { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public DateTime DateOfBirth { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+    private List<Course> EnrolledCourses = new List<Course>();
+    private List<Payment> PaymentHistory = new List<Payment>();
+
+    public Student(int studentID, string firstName, string lastName, DateTime dob, string email, string phone)
+    {
+        StudentID = studentID;
+        FirstName = firstName;
+        LastName = lastName;
+        DateOfBirth = dob;
+        Email = email;
+        PhoneNumber = phone;
+    }
+
+    public void EnrollInCourse(Course course)
+    {
+        EnrolledCourses.Add(course);
+        Console.WriteLine($"{FirstName} {LastName} enrolled in {course.CourseName}.");
+    }
+
+    public void MakePayment(decimal amount, DateTime paymentDate)
+    {
+        Payment payment = new Payment(PaymentHistory.Count + 1, this, amount, paymentDate);
+        PaymentHistory.Add(payment);
+        Console.WriteLine($"Payment of {amount:C} made on {paymentDate.ToShortDateString()}.");
+    }
+
+    public void DisplayStudentInfo()
+    {
+        Console.WriteLine($"Student: {FirstName} {LastName}, Email: {Email}, Phone: {PhoneNumber}");
+    }
+
+    public void UpdateStudentInfo(string firstName, string lastName, DateTime dob, string email, string phone)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        DateOfBirth = dob;
+        Email = email;
+        PhoneNumber = phone;
+        Console.WriteLine("Student information updated.");
+    }
+
+    public List<Course> GetEnrolledCourses() => EnrolledCourses;
+    public List<Payment> GetPaymentHistory() => PaymentHistory;
+}
+
+class Course
+{
+    public int CourseID { get; set; }
+    public string CourseName { get; set; }
+    public string CourseCode { get; set; }
+    public Teacher Instructor { get; private set; }
+    private List<Student> EnrolledStudents = new List<Student>();
+
+    public Course(int courseID, string courseName, string courseCode)
+    {
+        CourseID = courseID;
+        CourseName = courseName;
+        CourseCode = courseCode;
+    }
+
+    public void AssignTeacher(Teacher teacher)
+    {
+        Instructor = teacher;
+        Console.WriteLine($"{teacher.FirstName} {teacher.LastName} assigned to {CourseName}.");
+    }
+
+    public void UpdateCourseInfo(string courseCode, string courseName, string instructor)
+    {
+        CourseCode = courseCode;
+        CourseName = courseName;
+        Console.WriteLine("Course information updated.");
+    }
+
+    public void DisplayCourseInfo()
+    {
+        Console.WriteLine($"Course: {CourseName}, Code: {CourseCode}, Instructor: {Instructor?.FirstName} {Instructor?.LastName}");
+    }
+
+    public List<Student> GetEnrollments() => EnrolledStudents;
+    public Teacher GetTeacher() => Instructor;
+}
+
+class Teacher
+{
+    public int TeacherID { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+
+    public Teacher(int teacherID, string firstName, string lastName, string email)
+    {
+        TeacherID = teacherID;
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+    }
+
+    public void UpdateTeacherInfo(string firstName, string lastName, string email)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        Console.WriteLine("Teacher information updated.");
+    }
+
+    public void DisplayTeacherInfo()
+    {
+        Console.WriteLine($"Teacher: {FirstName} {LastName}, Email: {Email}");
+    }
+}
+
+class Enrollment
+{
+    public int EnrollmentID { get; set; }
+    public Student Student { get; set; }
+    public Course Course { get; set; }
+    public DateTime EnrollmentDate { get; set; }
+
+    public Enrollment(int enrollmentID, Student student, Course course, DateTime enrollmentDate)
+    {
+        EnrollmentID = enrollmentID;
+        Student = student;
+        Course = course;
+        EnrollmentDate = enrollmentDate;
+    }
+}
+
+class Payment
+{
+    public int PaymentID { get; set; }
+    public Student Student { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime PaymentDate { get; set; }
+
+    public Payment(int paymentID, Student student, decimal amount, DateTime paymentDate)
+    {
+        PaymentID = paymentID;
+        Student = student;
+        Amount = amount;
+        PaymentDate = paymentDate;
+    }
+}
+
+class SIS
+{
+    public void EnrollStudentInCourse(Student student, Course course)
+    {
+        student.EnrollInCourse(course);
+    }
+
+    public void AssignTeacherToCourse(Teacher teacher, Course course)
+    {
+        course.AssignTeacher(teacher);
+    }
+
+    public void RecordPayment(Student student, decimal amount, DateTime paymentDate)
+    {
+        student.MakePayment(amount, paymentDate);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        SIS sis = new SIS();
+        Student student1 = new Student(1, "John", "Doe", new DateTime(2000, 5, 15), "john@example.com", "123-456-7890");
+        Course course1 = new Course(101, "Mathematics", "MATH101");
+        Teacher teacher1 = new Teacher(1, "Alice", "Smith", "alice@example.com");
+
+        sis.AssignTeacherToCourse(teacher1, course1);
+        sis.EnrollStudentInCourse(student1, course1);
+        sis.RecordPayment(student1, 500, DateTime.Now);
+
+        student1.DisplayStudentInfo();
+        course1.DisplayCourseInfo();
+        teacher1.DisplayTeacherInfo();
+    }
+}
