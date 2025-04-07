@@ -1,0 +1,348 @@
+Student.cs
+using System.Collections.Generic;
+
+namespace SISApp
+{
+    internal class Student
+    {
+        public int StudentId { get; set; }
+        public string Name { get; set; }
+        public List<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public List<Payment> Payments { get; set; } = new List<Payment>();
+
+        public string ToString()
+        {
+            return $"StudentId: {StudentId}, Name: {Name}";
+        }
+    }
+}
+
+Course.cs
+using System.Collections.Generic;
+
+namespace SISApp
+{
+    internal class Course
+    {
+        public int CourseId { get; set; }
+        public string Title { get; set; }
+        public List<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+
+        public string ToString()
+        {
+            return $"CourseId: {CourseId}, Title: {Title}";
+        }
+    }
+}
+
+
+Teacher.cs
+using System.Collections.Generic;
+
+namespace SISApp
+{
+    internal class Teacher
+    {
+        public int TeacherId { get; set; }
+        public string Name { get; set; }
+        public List<Course> AssignedCourses { get; set; } = new List<Course>();
+
+        public string ToString()
+        {
+            return $"TeacherId: {TeacherId}, Name: {Name}";
+        }
+    }
+}
+
+Enrollment.cs
+using System;
+
+namespace SISApp
+{
+    internal class Enrollment
+    {
+        public Student Student { get; set; }
+        public Course Course { get; set; }
+        public DateTime EnrollmentDate { get; set; }
+
+        public string ToString()
+        {
+            return $"Student: {Student.Name}, Course: {Course.Title}, Date: {EnrollmentDate.ToShortDateString()}";
+        }
+    }
+}
+
+Payment.cs
+using System;
+
+namespace SISApp
+{
+    internal class Payment
+    {
+        public Student Student { get; set; }
+        public double Amount { get; set; }
+        public DateTime PaymentDate { get; set; }
+
+        public  string ToString()
+        {
+            return $"Student: {Student.Name}, Amount: {Amount}, Date: {PaymentDate.ToShortDateString()}";
+        }
+    }
+}
+
+Exception.cs
+using System;
+
+namespace SISApp
+{
+    internal class SISException : Exception
+    {
+        public SISException() : base() { }
+
+        public SISException(string message) : base(message) { }
+    }
+}
+
+Sisdao.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SISApp
+{
+    internal class SIS
+    {
+        public List<Student> Students = new List<Student>();
+        public List<Course> Courses = new List<Course>();
+        public List<Teacher> Teachers = new List<Teacher>();
+
+        public void AddStudent(Student student)
+        {
+            if (Students.Any(s => s.StudentId == student.StudentId))
+                throw new SISException("Student ID already exists.");
+            Students.Add(student);
+        }
+
+        public void AddCourse(Course course)
+        {
+            if (Courses.Any(c => c.CourseId == course.CourseId))
+                throw new SISException("Course ID already exists.");
+            Courses.Add(course);
+        }
+
+        public void AddTeacher(Teacher teacher)
+        {
+            if (Teachers.Any(t => t.TeacherId == teacher.TeacherId))
+                throw new SISException("Teacher ID already exists.");
+            Teachers.Add(teacher);
+        }
+
+        public void AddEnrollment(Student student, Course course, DateTime enrollmentDate)
+        {
+            var enrollment = new Enrollment { Student = student, Course = course, EnrollmentDate = enrollmentDate };
+            student.Enrollments.Add(enrollment);
+            course.Enrollments.Add(enrollment);
+        }
+
+        public void AssignCourseToTeacher(Course course, Teacher teacher)
+        {
+            if (!teacher.AssignedCourses.Contains(course))
+            {
+                teacher.AssignedCourses.Add(course);
+            }
+        }
+
+        public void AddPayment(Student student, double amount, DateTime date)
+        {
+            var payment = new Payment { Student = student, Amount = amount, PaymentDate = date };
+            student.Payments.Add(payment);
+        }
+
+        public List<Enrollment> GetEnrollmentsForStudent(Student student)
+        {
+            return student.Enrollments;
+        }
+
+        public List<Course> GetCoursesForTeacher(Teacher teacher)
+        {
+            return teacher.AssignedCourses;
+        }
+
+        public Student GetStudentById(int id) => Students.FirstOrDefault(s => s.StudentId == id)
+            ?? throw new SISException("Student not found.");
+
+        public Course GetCourseById(int id) => Courses.FirstOrDefault(c => c.CourseId == id)
+            ?? throw new SISException("Course not found.");
+
+        public Teacher GetTeacherById(int id) => Teachers.FirstOrDefault(t => t.TeacherId == id)
+            ?? throw new SISException("Teacher not found.");
+    }
+}
+
+comparer.cs
+using System.Collections.Generic;
+
+namespace SISApp
+{
+    internal class StudentNameComparer : IComparer<Student>
+    {
+        public int Compare(Student x, Student y)
+        {
+            return x.Name.CompareTo(y.Name);
+        }
+    }
+}
+
+UserInterface.cs
+using System;
+
+namespace SISApp
+{
+    internal class UserInterface
+    {
+        public int GetIntInput(string prompt)
+        {
+            Console.WriteLine(prompt);
+            return Convert.ToInt32(Console.ReadLine());
+        }
+
+        public string GetStringInput(string prompt)
+        {
+            Console.WriteLine(prompt);
+            return Console.ReadLine();
+        }
+
+        public double GetDoubleInput(string prompt)
+        {
+            Console.WriteLine(prompt);
+            return Convert.ToDouble(Console.ReadLine());
+        }
+
+        public DateTime GetDateInput(string prompt)
+        {
+            Console.WriteLine(prompt);
+            return Convert.ToDateTime(Console.ReadLine());
+        }
+    }
+}
+
+program.cs
+using System;
+
+namespace SISApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            SIS sis = new SIS();
+            UserInterface ui = new UserInterface();
+            bool exit = false;
+
+            while (!exit)
+            {
+                Console.WriteLine("\nStudent Information System");
+                Console.WriteLine("1. Add Student");
+                Console.WriteLine("2. Add Course");
+                Console.WriteLine("3. Add Teacher");
+                Console.WriteLine("4. Enroll Student to Course");
+                Console.WriteLine("5. Assign Course to Teacher");
+                Console.WriteLine("6. Make Payment");
+                Console.WriteLine("7. View Enrollments of Student");
+                Console.WriteLine("8. View Courses Assigned to Teacher");
+                Console.WriteLine("9. Exit");
+                Console.Write("Choose an option: ");
+
+                string choice = Console.ReadLine();
+
+                try
+                {
+                    switch (choice)
+                    {
+                        case "1":
+                            var student = new Student
+                            {
+                                StudentId = ui.GetIntInput("Enter Student ID:"),
+                                Name = ui.GetStringInput("Enter Student Name:")
+                            };
+                            sis.AddStudent(student);
+                            Console.WriteLine("Student added.");
+                            break;
+
+                        case "2":
+                            var course = new Course
+                            {
+                                CourseId = ui.GetIntInput("Enter Course ID:"),
+                                Title = ui.GetStringInput("Enter Course Title:")
+                            };
+                            sis.AddCourse(course);
+                            Console.WriteLine("Course added.");
+                            break;
+
+                        case "3":
+                            var teacher = new Teacher
+                            {
+                                TeacherId = ui.GetIntInput("Enter Teacher ID:"),
+                                Name = ui.GetStringInput("Enter Teacher Name:")
+                            };
+                            sis.AddTeacher(teacher);
+                            Console.WriteLine("Teacher added.");
+                            break;
+
+                        case "4":
+                            var studentId = ui.GetIntInput("Enter Student ID:");
+                            var courseId = ui.GetIntInput("Enter Course ID:");
+                            var date = ui.GetDateInput("Enter Enrollment Date (YYYY-MM-DD):");
+                            sis.AddEnrollment(sis.GetStudentById(studentId), sis.GetCourseById(courseId), date);
+                            Console.WriteLine("Enrollment successful.");
+                            break;
+
+                        case "5":
+                            int cid = ui.GetIntInput("Enter Course ID:");
+                            int tid = ui.GetIntInput("Enter Teacher ID:");
+                            sis.AssignCourseToTeacher(sis.GetCourseById(cid), sis.GetTeacherById(tid));
+                            Console.WriteLine("Course assigned to teacher.");
+                            break;
+
+                        case "6":
+                            int sid = ui.GetIntInput("Enter Student ID:");
+                            double amount = ui.GetDoubleInput("Enter Payment Amount:");
+                            var payDate = ui.GetDateInput("Enter Payment Date:");
+                            sis.AddPayment(sis.GetStudentById(sid), amount, payDate);
+                            Console.WriteLine("Payment recorded.");
+                            break;
+
+                        case "7":
+                            int sId = ui.GetIntInput("Enter Student ID:");
+                            var enrollments = sis.GetEnrollmentsForStudent(sis.GetStudentById(sId));
+                            Console.WriteLine("\nEnrollments:");
+                            enrollments.ForEach(e => Console.WriteLine(e));
+                            break;
+
+                        case "8":
+                            int tId = ui.GetIntInput("Enter Teacher ID:");
+                            var courses = sis.GetCoursesForTeacher(sis.GetTeacherById(tId));
+                            Console.WriteLine("\nAssigned Courses:");
+                            courses.ForEach(c => Console.WriteLine(c));
+                            break;
+
+                        case "9":
+                            exit = true;
+                            break;
+
+                        default:
+                            Console.WriteLine("Invalid choice.");
+                            break;
+                    }
+                }
+                catch (SISException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                
+            }
+        }
+    }
+}
+
+
