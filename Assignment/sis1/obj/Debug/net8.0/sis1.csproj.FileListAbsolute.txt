@@ -1,0 +1,14 @@
+C:\Users\padma\Downloads\C#\sis1\bin\Debug\net8.0\sis1.exe
+C:\Users\padma\Downloads\C#\sis1\bin\Debug\net8.0\sis1.deps.json
+C:\Users\padma\Downloads\C#\sis1\bin\Debug\net8.0\sis1.runtimeconfig.json
+C:\Users\padma\Downloads\C#\sis1\bin\Debug\net8.0\sis1.dll
+C:\Users\padma\Downloads\C#\sis1\bin\Debug\net8.0\sis1.pdb
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.AssemblyInfoInputs.cache
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.AssemblyInfo.cs
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.csproj.CoreCompileInputs.cache
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.dll
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\refint\sis1.dll
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.pdb
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\sis1.genruntimeconfig.cache
+C:\Users\padma\Downloads\C#\sis1\obj\Debug\net8.0\ref\sis1.dll
